@@ -1,10 +1,29 @@
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 
-from .models import Book
-from .serializers import BookSerializer
+from .models import Book, BookItem, OrderBookItem, Order, OrderItem
+from .serializers import BookSerializer, BookItemSerializer, OrderBookItemSerializer, OrderSerializer, OrderItemSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class BookItemViewSet(viewsets.ModelViewSet):
+    queryset = BookItem.objects.all()
+    serializer_class = BookItemSerializer
+
+
+class OrderBookItemViewSet(viewsets.ModelViewSet):
+    queryset = OrderBookItem.objects.all()
+    serializer_class = OrderBookItemSerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+
+class OrderItemViewSet(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
