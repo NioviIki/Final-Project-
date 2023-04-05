@@ -3,7 +3,7 @@ from django.db import models
 
 class Book(models.Model):
     title = models.CharField(max_length=50)
-    price = models.SmallIntegerField()
+    price = models.DecimalField(max_digits=100, decimal_places=2)
 
 class BookItem(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
