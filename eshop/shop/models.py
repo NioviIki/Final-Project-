@@ -3,8 +3,8 @@ from django.db import models
 from django.urls import reverse
 
 User = get_user_model()
-class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class UserProfile(User):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
 
     def get_absolute_url(self):

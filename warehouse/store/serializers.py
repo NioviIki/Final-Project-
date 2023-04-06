@@ -3,15 +3,17 @@ from .models import Book, BookItem, OrderBookItem, Order, OrderItem
 
 
 class BookSerializer(serializers.ModelSerializer):
+    bookitem = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = Book
-        fields = ['title', 'price']
+        fields = ['id', 'title', 'price', 'bookitem']
 
 
 class BookItemSerializer(serializers.ModelSerializer):
+    book = serializers.ReadOnlyField(source='book.title')
     class Meta:
         model = BookItem
-        fields = ['book', 'palce']
+        fields = ['book', 'place']
 
 
 class OrderBookItemSerializer(serializers.ModelSerializer):
