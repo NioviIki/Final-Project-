@@ -26,4 +26,8 @@ app.conf.beat_schedule = {
         'task': 'shop.tasks.shelf_check',
         'schedule': crontab(minute='*/5', hour="*"),
     },
+    'check_order_status': {
+        'task': 'shop.tasks.check_order_status',
+        'schedule': crontab(minute='*/5', hour="*"),
+    }
 }

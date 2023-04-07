@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+{% for i in object_list.order_item.all %}
+    <p>{{ i.book.title }}</p>
+    <p>{{ i.quantity }}
+        <a href="{% url 'shop:order_delete' i.id%}"><input type="submit" value="delete"/></a>
+        <a href="{% url 'shop:order_update' i.id%}"><input type="submit" value="update"/></a>
+
+    </p>
+{% endfor %}
+<a href="{% url 'shop:order_accept' %}"> <input type="submit" value="order"/></a>
+</body>
+</html>

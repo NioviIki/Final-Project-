@@ -23,17 +23,22 @@ class Order(models.Model):
     user_email = models.EmailField()
     status = models.CharField(max_length=7, choices=Status.choices)
     delivery_adress = models.CharField(max_length=50)
+    order_id_in_shop = models.IntegerField()
+
     def __str__(self):
         return self.status
 
 
 
 class OrderItem(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     def __str__(self):
-        return f'{self.order}: {self.book}'
+        return f'{self.order}  {self.book}'
+
+    def book_title(self):
+        return self.book.title
 
 class OrderBookItem(models.Model):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE)

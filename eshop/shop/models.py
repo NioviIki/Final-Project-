@@ -1,10 +1,8 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
-User = get_user_model()
 class UserProfile(User):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -28,15 +26,14 @@ class Order(models.Model):
     status = models.CharField(max_length=7, choices=Status.choices)
     delivery_adress = models.CharField(max_length=50)
 
+    def user_email(self):
+        return self.user_id.email
+
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_item')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
-
-
-
-
-
-
+    def __str__(self):
+        return f'{self.book.title} {self.quantity}'
 

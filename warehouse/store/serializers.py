@@ -25,10 +25,10 @@ class OrderBookItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['user_email', 'status', 'delivery_adress']
+        fields = ['order_id_in_shop', 'user_email', 'status', 'delivery_adress']
 
 
-class OrderItemSerializer(serializers.ModelSerializer):
+class OrderItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['order', 'book', 'quantity']
+        fields = ['url', 'order', 'book_title', 'quantity']

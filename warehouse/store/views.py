@@ -25,5 +25,5 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
-    queryset = OrderItem.objects.all()
+    queryset = OrderItem.objects.filter(order__status="In_Work")
     serializer_class = OrderItemSerializer
