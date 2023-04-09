@@ -67,6 +67,7 @@ class OrderItemView(mixins.LoginRequiredMixin, SuccessMessageMixin, generic.Form
     form_class = OrderItemForm
     template_name = 'shop/order_item.html'
     success_message = 'Accepted'
+    login_url = reverse_lazy('shop:login')
 
     def form_valid(self, form):
         Order.objects.filter(status='Cart').get_or_create(user_id=UserProfile.objects.get(slug=self.request.user),

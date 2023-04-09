@@ -7,6 +7,9 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    def bookitems(self):
+        return len(self.bookitem.filter(orderbookitem__exact=None))
+
 class BookItem(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='bookitem')
     place = models.CharField(max_length=50, blank=True)
@@ -26,8 +29,7 @@ class Order(models.Model):
     order_id_in_shop = models.IntegerField()
 
     def __str__(self):
-        return self.status
-
+        return self.user_email
 
 
 class OrderItem(models.Model):
@@ -45,3 +47,6 @@ class OrderBookItem(models.Model):
     book_item = models.OneToOneField(BookItem, on_delete=models.CASCADE)
     def __str__(self):
         return f'{self.order_item}: {self.book_item}'
+
+
+

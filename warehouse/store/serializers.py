@@ -3,32 +3,33 @@ from .models import Book, BookItem, OrderBookItem, Order, OrderItem
 
 
 class BookSerializer(serializers.ModelSerializer):
-    bookitem = serializers.StringRelatedField(many=True, read_only=True)
+    # bookitem = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = Book
-        fields = ['id', 'title', 'price', 'bookitem']
+        fields = ['id', 'title', 'price', 'bookitems']
 
 
 class BookItemSerializer(serializers.ModelSerializer):
-    book = serializers.ReadOnlyField(source='book.title')
+    # book = serializers.
     class Meta:
         model = BookItem
-        fields = ['book', 'place']
+        fields = ['place', 'book']
 
 
 class OrderBookItemSerializer(serializers.ModelSerializer):
+    book_items = serializers.StringRelatedField(many=False, source='book_item', read_only=False)
     class Meta:
         model = OrderBookItem
-        fields = ['order_item', 'book_item']
+        fields = ['order_item', 'book_items']
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
-        fields = ['order_id_in_shop', 'user_email', 'status', 'delivery_adress']
+        fields = ['url', 'order_id_in_shop', 'user_email', 'status', 'delivery_adress', 'id']
 
 
-class OrderItemSerializer(serializers.HyperlinkedModelSerializer):
+class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['url', 'order', 'book_title', 'quantity']
+        fields = ['url', 'order', 'book_title', 'quantity', 'book']

@@ -10,20 +10,26 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 class BookItemViewSet(viewsets.ModelViewSet):
-    queryset = BookItem.objects.all()
+    queryset = BookItem.objects.filter(orderbookitem__exact=None).order_by('book')
     serializer_class = BookItemSerializer
 
 
 class OrderBookItemViewSet(viewsets.ModelViewSet):
     queryset = OrderBookItem.objects.all()
+    # filter(book_item__book__exact=None)
     serializer_class = OrderBookItemSerializer
+
+    # def perform_create(self, serializer):
+    #     print(serializer['data'])
+    #     pass
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.filter(status="In_Work")
     serializer_class = OrderSerializer
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.filter(order__status="In_Work")
     serializer_class = OrderItemSerializer
+
