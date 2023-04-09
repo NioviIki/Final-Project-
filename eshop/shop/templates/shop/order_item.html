@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if messages %}
+    <div class="alert alert-success">
+        {% for m in messages %}
+            <p>{{ m }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="order"/>
+</form>
+</body>
+</html>
