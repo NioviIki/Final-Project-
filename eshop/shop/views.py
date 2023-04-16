@@ -59,6 +59,7 @@ class RegistrationView(generic.FormView):
 class BookView(generic.ListView):
     model = Book
     template_name = 'shop/book_list.html'
+    paginate_by = 15
 
     def get_queryset(self):
         return Book.objects.filter(quantity__gt=0)
