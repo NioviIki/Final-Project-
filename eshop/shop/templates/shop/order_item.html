@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+
 {% if messages %}
     <div class="alert alert-success" >
         {% for m in messages %}
@@ -18,9 +19,18 @@
     {% csrf_token %}
     {{ form }}
     <button type="submit" class="btn btn-primary btn-sm">accept</button>
-{% else %}
-<div class="container" style="padding-top: 60px;">  {# генерит все на сртаничке #}
 
+{% elif error_messages %}
+    <div class="alert alert-danger" >
+    {{ error_messages }}
+</div>
+    <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-primary btn-sm">accept</button>
+{% else %}
+
+<div class="container" style="padding-top: 60px;">  {# генерит все на сртаничке #}
   {% block content %}
 
 <form method="post">

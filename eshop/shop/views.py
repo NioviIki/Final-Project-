@@ -30,7 +30,6 @@ class UserProfileView(generic.DetailView):
 class LoginViewUpdated(views.LoginView):
     template_name = 'shop/registration/login.html'
     def get_default_redirect_url(self):
-        """Return the default redirect URL."""
         if self.next_page:
             return resolve_url(self.next_page)
         else:
@@ -71,6 +70,16 @@ class OrderItemView(mixins.LoginRequiredMixin, SuccessMessageMixin, generic.Form
     template_name = 'shop/order_item.html'
     success_message = 'Accepted'
     login_url = reverse_lazy('shop:login')
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid() and form.cleaned_data['quantity'] <= Book.objects.get(pk=self.kwargs['pk']).quantity:
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form, error_messages='not Accepted'))
 
     def form_valid(self, form):
         Order.objects.filter(status='Cart').get_or_create(user_id=UserProfile.objects.get(slug=self.request.user),
@@ -141,10 +150,20 @@ class OrderDelete(generic.DeleteView):
 
 class OrderUpdate(generic.UpdateView):
     model = OrderItem
-    fields = ('quantity', )
+    form_class = OrderItemForm
     template_name = 'shop/order_update.html'
     success_url = reverse_lazy('shop:order_detail')
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid() and form.cleaned_data['quantity'] <= Book.objects.get(pk=OrderItem.objects.get(pk=self.kwargs['pk']).book_id).quantity:
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form, error_messages='not Accepted'))
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.filter(status='Ordered')
