@@ -7,6 +7,7 @@ from django.contrib.auth import views, get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import mixins
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 
 from .serializers import OrderSerializer
 from .models import Book, Order, OrderItem, UserProfile
@@ -92,7 +93,13 @@ class OrderDetail(generic.ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(username=user))
+        try:
+            Order.objects.filter(status='Cart').filter(order_item__quantity__gt=0).get(user_id=UserProfile.objects.get(username=user))
+        except Order.DoesNotExist:
+            return messages.error(self.request, 'Your shopping cart is empty')
+        else:
+            return Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(username=user))
+
 
 
 
