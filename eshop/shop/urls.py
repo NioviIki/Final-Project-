@@ -24,4 +24,4 @@ urlpatterns = [
     path('register/', views.RegistrationView.as_view(), name='registration'),
 
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
