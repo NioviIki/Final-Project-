@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import mixins
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.db.models import Avg, Sum
 
 from .serializers import OrderSerializer
 from .models import Book, Order, OrderItem, UserProfile
@@ -75,10 +76,21 @@ class OrderItemView(mixins.LoginRequiredMixin, SuccessMessageMixin, generic.Form
         Order.objects.filter(status='Cart').get_or_create(user_id=UserProfile.objects.get(slug=self.request.user),
                                                                 defaults={'status': 'Cart'})
         try:
-            OrderItem.objects.create(order=Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(slug=self.request.user)),
-                                     book=Book.objects.filter(quantity__gt=0).get(pk=self.kwargs['pk']),
-                                     quantity=form.cleaned_data['quantity']
-                                     )
+            try:
+                x = OrderItem.objects.get(order=Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(slug=self.request.user)),
+                                         book=Book.objects.filter(quantity__gt=0).get(pk=self.kwargs['pk']),
+                                         )
+            except OrderItem.DoesNotExist:
+                OrderItem.objects.create(order=Order.objects.filter(status='Cart').get(
+                    user_id=UserProfile.objects.get(slug=self.request.user)),
+                                      book=Book.objects.filter(quantity__gt=0).get(pk=self.kwargs['pk']),
+                                      quantity=form.cleaned_data['quantity']
+                                      )
+            else:
+                OrderItem.objects.filter(order=Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(slug=self.request.user)),
+                                         book=Book.objects.filter(quantity__gt=0).get(pk=self.kwargs['pk']),
+                                         ).update(quantity=x.quantity + form.cleaned_data['quantity'])
+
         except Book.DoesNotExist:
             self.success_url = reverse_lazy('shop:book')
             return super().form_valid(form)
@@ -94,12 +106,21 @@ class OrderDetail(generic.ListView):
     def get_queryset(self):
         user = self.request.user
         try:
-            Order.objects.filter(status='Cart').filter(order_item__quantity__gt=0).get(user_id=UserProfile.objects.get(username=user))
+            Order.objects.filter(status='Cart').filter(order_item__quantity__gt=0).filter(user_id=UserProfile.objects.get(username=user))
         except Order.DoesNotExist:
             return messages.error(self.request, 'Your shopping cart is empty')
         else:
-            return Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(username=user))
+            if Order.objects.filter(status='Cart').annotate(
+                sum_of_order=Sum('order_item__book__price') * Sum('order_item__quantity'),
+                quantity_of_order=Sum('order_item__quantity')
+            ).get(user_id=UserProfile.objects.get(username=user)).order_item.all():
 
+                return Order.objects.filter(status='Cart').annotate(
+                    sum_of_order=Sum('order_item__book__price') * Sum('order_item__quantity'),
+                    quantity_of_order=Sum('order_item__quantity')
+                ).get(user_id=UserProfile.objects.get(username=user))
+            else:
+                return messages.error(self.request, 'Your shopping cart is empty')
 
 
 

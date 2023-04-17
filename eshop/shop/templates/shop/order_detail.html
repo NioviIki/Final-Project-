@@ -78,22 +78,23 @@ div.c {text-align: right;}
       <tr>
         <th>Book title</th>
         <th>Quantity</th>
+        <th>Book Price</th>
       </tr>
     </thead>
     <tbody>
-    {% for i in object_list.order_item.all %}
+    {% for books in object_list.order_item.all %}
       <tr>
-        <td>{{ i.book.title }}</td>
-        <td>{{ i.quantity }}</td>
-        <td>{{ book.quantity}}</td>
+        <td>{{ books.book.title }}</td>
+        <td>{{ books.quantity }}</td>
+        <td>{{ books.book.price }}$</td>
         <td>
-        <a href="{% url 'shop:order_delete' i.id%}">
-            <button type="button" class="btn btn-primary" href="{% url 'shop:order_delete' i.id%}">
+        <a href="{% url 'shop:order_delete' books.id%}">
+            <button type="button" class="btn btn-primary" href="{% url 'shop:order_delete' books.id%}">
                 Delete
             </button>
         </a>
-        <a href="{% url 'shop:order_update' i.id%}">
-            <button type="button" class="btn btn-primary" href="{% url 'shop:order_update' i.id%}">
+        <a href="{% url 'shop:order_update' books.id%}">
+            <button type="button" class="btn btn-primary" href="{% url 'shop:order_update' books.id%}">
                 Update
             </button>
         </a>
@@ -101,18 +102,24 @@ div.c {text-align: right;}
       </tr>
     {% endfor %}
     </tbody>
-  </table>
-
-</div>
-
-<div class="container pt-3">
-    <div class="c">
+      <thead>
+      <tr>
+        <th>Confirmation</th>
+        <th>{{ object_list.quantity_of_order }}</th>
+        <th>{{ object_list.sum_of_order }}</th>
+        <th>
+            <div class="container pt-3">
         <a href="{% url 'shop:order_accept' %}">
             <button type="button" class="btn btn-primary">
                 Order
             </button>
         </a>
-    </div>
+            </div>
+          </th>
+      </tr>
+    </thead>
+  </table>
+
 </div>
 {% endif %}
 </body>
