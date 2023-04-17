@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import mixins
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.db.models import Avg, Sum
+from django.db.models import Sum
 
 from .serializers import OrderSerializer
 from .models import Book, Order, OrderItem, UserProfile
@@ -73,8 +73,15 @@ class OrderItemView(mixins.LoginRequiredMixin, SuccessMessageMixin, generic.Form
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        if form.is_valid() and form.cleaned_data['quantity'] <= Book.objects.get(pk=self.kwargs['pk']).quantity:
-            return self.form_valid(form)
+        if form.is_valid() and form.cleaned_data['quantity'] <= Book.objects.get(pk=self.kwargs['pk']).quantity :
+            try:
+                OrderItem.objects.get(order=Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(slug=self.request.user)), book=Book.objects.get(pk=self.kwargs['pk']))
+            except OrderItem.DoesNotExist:
+                return self.form_valid(form)
+            else:
+                if OrderItem.objects.get(order=Order.objects.filter(status='Cart').get(user_id=UserProfile.objects.get(slug=self.request.user)),book=Book.objects.get(pk=self.kwargs['pk'])).quantity < Book.objects.get(pk=self.kwargs['pk']).quantity:
+                    return self.form_valid(form)
+                return self.form_invalid(form)
         else:
             return self.form_invalid(form)
 
