@@ -2,11 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
+
 class UserProfile(User):
     slug = models.SlugField()
 
     def get_absolute_url(self):
         return reverse("profile", kwargs={"slug": self.slug})
+
 
 class Book(models.Model):
     title = models.CharField(max_length=50)
@@ -29,6 +31,7 @@ class Order(models.Model):
     def user_email(self):
         return self.user_id.email
 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_item')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
@@ -36,4 +39,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f'{self.book.title} {self.quantity}'
-

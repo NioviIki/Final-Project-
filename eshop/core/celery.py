@@ -21,6 +21,7 @@ app.autodiscover_tasks()
 def debug_task(self):
     print(f'Request: {self.request!r}')     # noqa:T201
 
+
 app.conf.beat_schedule = {
     'shelf_check': {
         'task': 'shop.tasks.shelf_check',
@@ -32,6 +33,6 @@ app.conf.beat_schedule = {
     },
     'order_chek': {
             'task': 'shop.tasks.order_check',
-            'schedule': crontab(minute='*/5', hour="*"),
+            'schedule': crontab(minute='*', hour="*"),
         },
 }

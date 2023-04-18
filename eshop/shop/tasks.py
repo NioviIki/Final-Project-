@@ -1,6 +1,9 @@
 from celery import shared_task
+
 import requests
+
 from shop.models import Book, Order, OrderItem
+
 
 @shared_task()
 def shelf_check():
@@ -12,6 +15,7 @@ def shelf_check():
                                           defaults={'price': book['price'],
                                                     'quantity': book['bookitems']})
 
+
 @shared_task()
 def check_order_status():
     orders = requests.get('http://127.0.0.1:8001/Order/')
@@ -21,6 +25,7 @@ def check_order_status():
                 change = Order.objects.get(pk=order['order_id_in_shop'])
                 change.status = 'Success'
                 change.save()
+
 
 @shared_task()
 def order_check():
@@ -40,8 +45,8 @@ def order_check():
                 for i in requests.get('http://127.0.0.1:8001/Order/').json():
                     if i['order_id_in_shop'] == order.id:
                         myobj = {
-                            "order": f"http://127.0.0.1:8001/Order/{i['id']}/",
+                            "order": i['id'],
                             "quantity": book.quantity,
-                            "book": f'http://127.0.0.1:8001/Book/{Book.objects.get(title=book.book.title).id}/'
+                            "book": Book.objects.get(title=book.book.title).id
                         }
                         requests.post('http://127.0.0.1:8001/OrderItem/', json=myobj)
