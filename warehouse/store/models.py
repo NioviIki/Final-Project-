@@ -17,7 +17,7 @@ class BookItem(models.Model):
     place = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return f'{self.id}'
+        return f'{self.book.title}  {self.id}'
 
 
 class Order(models.Model):

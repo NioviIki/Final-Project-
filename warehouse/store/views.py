@@ -15,7 +15,7 @@ class BookItemViewSet(viewsets.ModelViewSet):
 
 
 class OrderBookItemViewSet(viewsets.ModelViewSet):
-    queryset = OrderBookItem.objects.all()
+    queryset = OrderBookItem.objects.filter(order_item__order__status="In_Work")
     serializer_class = serializers.OrderBookItemSerializer
 
 
