@@ -1,35 +1,29 @@
 from rest_framework import viewsets
 
-from .models import Book, BookItem, OrderBookItem, Order, OrderItem
-from .serializers import BookSerializer, BookItemSerializer, OrderBookItemSerializer, OrderSerializer, OrderItemSerializer
+from . import serializers
+from .models import Book, BookItem, Order, OrderBookItem, OrderItem
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
-    serializer_class = BookSerializer
+    serializer_class = serializers.BookSerializer
 
 
 class BookItemViewSet(viewsets.ModelViewSet):
     queryset = BookItem.objects.filter(orderbookitem__exact=None).order_by('book')
-    serializer_class = BookItemSerializer
+    serializer_class = serializers.BookItemSerializer
 
 
 class OrderBookItemViewSet(viewsets.ModelViewSet):
     queryset = OrderBookItem.objects.all()
-    # filter(book_item__book__exact=None)
-    serializer_class = OrderBookItemSerializer
-
-    # def perform_create(self, serializer):
-    #     print(serializer['data'])
-    #     pass
+    serializer_class = serializers.OrderBookItemSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.filter(status="In_Work")
-    serializer_class = OrderSerializer
+    serializer_class = serializers.OrderSerializer
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.filter(order__status="In_Work")
-    serializer_class = OrderItemSerializer
-
+    serializer_class = serializers.OrderItemSerializer

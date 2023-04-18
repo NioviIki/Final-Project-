@@ -1,10 +1,10 @@
 import random
 
-from store.models import Book, BookItem, OrderBookItem, Order, OrderItem
-
 from django.core.management import BaseCommand
 
 from faker import Faker
+
+from store.models import Book, BookItem
 
 
 class Command(BaseCommand):
@@ -15,8 +15,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         fake = Faker()
         for _ in range(3):
-            Book.objects.create(title=" ".join(fake.words()), price=random.randint(101, 10000)/100)
+            Book.objects.create(title=" ".join(fake.words()),
+                                price=random.randint(101, 10000)/100)
 
         for _ in range(5):
-            BookItem.objects.create(place=" ".join(fake.words(2)), book=Book.objects.get(pk=random.randint(1, Book.objects.count())))
-
+            BookItem.objects.create(place=" ".join(fake.words(2)),
+                                    book=Book.objects.get(
+                                        pk=random.randint(1, Book.objects.count())))

@@ -4,17 +4,20 @@ from django.db import models
 class Book(models.Model):
     title = models.CharField(max_length=50, unique=True)
     price = models.DecimalField(max_digits=100, decimal_places=2)
+
     def __str__(self):
         return self.title
 
     def bookitems(self):
         return len(self.bookitem.filter(orderbookitem__exact=None))
 
+
 class BookItem(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='bookitem')
     place = models.CharField(max_length=50, blank=True)
+
     def __str__(self):
-        return self.book.title
+        return f'{self.id}'
 
 
 class Order(models.Model):
@@ -36,17 +39,17 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+
     def __str__(self):
         return f'{self.order}  {self.book}'
 
     def book_title(self):
         return self.book.title
 
+
 class OrderBookItem(models.Model):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
     book_item = models.OneToOneField(BookItem, on_delete=models.CASCADE)
+
     def __str__(self):
         return f'{self.order_item}: {self.book_item}'
-
-
-

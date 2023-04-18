@@ -1,6 +1,6 @@
-from store.urls import router
-
 from django.urls import include, path
+
+from store.urls import router
 
 
 urlpatterns = [
